@@ -32,3 +32,7 @@ class RoundModelTests(TestCase):
         round.save()
         self.assertIs(Round.objects.filter(round_id=1234).exists(), True)
 
+    def test_multiple(self):
+        for x in range(0,50):
+            Round().save()
+        self.assertIs(Round.objects.all().count(), 50)
