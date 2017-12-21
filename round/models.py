@@ -12,6 +12,27 @@ def random_4_digits():
             return random_number
         random_number = randint(1000, 9999)
 
+class Course(models.Model):
+    course_name = models.CharField(max_length=20)
+    hole_1 = models.IntegerField(default=0)
+    hole_2 = models.IntegerField(default=0)
+    hole_3 = models.IntegerField(default=0)
+    hole_4 = models.IntegerField(default=0)
+    hole_5 = models.IntegerField(default=0)
+    hole_6 = models.IntegerField(default=0)
+    hole_7 = models.IntegerField(default=0)
+    hole_8 = models.IntegerField(default=0)
+    hole_9 = models.IntegerField(default=0)
+    hole_10 = models.IntegerField(default=0)
+    hole_11 = models.IntegerField(default=0)
+    hole_12 = models.IntegerField(default=0)
+    hole_13 = models.IntegerField(default=0)
+    hole_14 = models.IntegerField(default=0)
+    hole_15 = models.IntegerField(default=0)
+    hole_16 = models.IntegerField(default=0)
+    hole_17 = models.IntegerField(default=0)
+    hole_18 = models.IntegerField(default=0)
+
 class Round(models.Model):
     round_id = models.IntegerField(primary_key=True, default=random_4_digits)
-    course = None
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
