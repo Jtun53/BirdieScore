@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Round, Course
+from .models import Round, Course, Player
 
 # Create your views here.
 
@@ -14,9 +14,18 @@ def create_round(request):
     round.save()
     return HttpResponse('Created')
 
+def add_player_to_round(request, round, name):
+    round = Round.objects.get(round_id=round)
+    for x in range (1,4):
+        if getattr(round,'player_{}'.format(x)) != None:
+            round.player_1 = Player()
+            round.player_1.player_name = name
+            round.player.save()
+    return HttpResponse("Created player")
+
 def get_round_by_id(request, id):
     round = Round.objects.get(round_id=id)
-    return HttpResponse(getattr(round.course,'course_name'))
+    return HttpResponse(getattr(round, 'player_1'))
 
 def create_course_by_name(request, name):
     #TODO

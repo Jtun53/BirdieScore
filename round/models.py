@@ -33,6 +33,10 @@ class Course(models.Model):
     hole_17 = models.IntegerField(default=0)
     hole_18 = models.IntegerField(default=0)
 
+class Player(models.Model):
+    player_name = models.CharField(max_length=50)
+
 class Round(models.Model):
     round_id = models.IntegerField(primary_key=True, default=random_4_digits)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
+
