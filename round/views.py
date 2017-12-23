@@ -63,3 +63,8 @@ def get_course(request, name):
         info.append('Hole {}: {}\n'.format(x, getattr(course, 'hole_{}'.format(x))))
     return HttpResponse("".join(info))
 
+def get_score(request,round_id, name):
+    pass
+
+def edit_score(request,round_id, name, hole, num):
+    pass
