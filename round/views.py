@@ -14,14 +14,15 @@ def create_round(request):
     round.save()
     return HttpResponse('Created')
 
-def add_player_to_round(request, round, name):
-    round = Round.objects.get(round_id=round)
-    for x in range (1,4):
-        if getattr(round,'player_{}'.format(x)) != None:
-            round.player_1 = Player()
-            round.player_1.player_name = name
-            round.player.save()
-    return HttpResponse("Created player")
+def create_player(request, id):
+    if Player.objects.filter(player_name=id).exists() == False:
+        new_player = Player()
+        new_player.player_name = id
+        new_player.save()
+        response = "Created Player"
+    else:
+        response = "Player already exists!"
+    return HttpResponse(response)
 
 def get_round_by_id(request, id):
     round = Round.objects.get(round_id=id)
