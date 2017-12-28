@@ -25,8 +25,13 @@ def create_player(request, id):
     return HttpResponse(response)
 
 def get_round_by_id(request, id):
-    round = Round.objects.get(round_id=id)
-    return HttpResponse(getattr(round, 'player_1'))
+    score_list = []
+    scores = Score.objects.filter(round_id=id)
+    for items in scores:
+        for x in range(1, 19):
+            hole_score = getattr(items, 'hole_{}'.format(x))
+            score_list.append("hole {}: {}\n".format(x, hole_score))
+    return HttpResponse("\n".join(score_list))
 
 def create_course_by_name(request, name):
     #TODO
