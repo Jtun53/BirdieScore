@@ -90,7 +90,8 @@ def edit_score(request, round_id, player_name, hole, score):
     if Score.objects.filter(round_id=round_id).exists() == False or Player.objects.filter(player_name=player_name).exists() == False:
         success = _add_player_to_round(round_id, player_name)
         if success:
-            player_score = Score.objects.filter(round_id=round_id).filter(player_name=player_name)
+            new_player_id = Player.objects.get(player_name=player_name)
+            player_score = Score.objects.get(round_id=round_id, player_id=new_player_id)
             setattr(player_score, 'hole_{}'.format(hole), score)
             player_score.save()
             return HttpResponse("Score edited")
