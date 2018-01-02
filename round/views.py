@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Round, Course, Player
+from .models import Round, Course, Player, Score
 
 # Create your views here.
 
@@ -14,18 +14,24 @@ def create_round(request):
     round.save()
     return HttpResponse('Created')
 
-def add_player_to_round(request, round, name):
-    round = Round.objects.get(round_id=round)
-    for x in range (1,4):
-        if getattr(round,'player_{}'.format(x)) != None:
-            round.player_1 = Player()
-            round.player_1.player_name = name
-            round.player.save()
-    return HttpResponse("Created player")
+def create_player(request, id):
+    if Player.objects.filter(player_name=id).exists() == False:
+        new_player = Player()
+        new_player.player_name = id
+        new_player.save()
+        response = "Created Player"
+    else:
+        response = "Player already exists!"
+    return HttpResponse(response)
 
 def get_round_by_id(request, id):
-    round = Round.objects.get(round_id=id)
-    return HttpResponse(getattr(round, 'player_1'))
+    score_list = []
+    scores = Score.objects.filter(round_id=id)
+    for items in scores:
+        for x in range(1, 19):
+            hole_score = getattr(items, 'hole_{}'.format(x))
+            score_list.append("hole {}: {}\n".format(x, hole_score))
+    return HttpResponse("\n".join(score_list))
 
 def create_course_by_name(request, name):
     #TODO
@@ -59,7 +65,48 @@ def get_course(request, name):
     course = Course.objects.get(course_name=name)
     info = []
     info.append('Course_name: {}\n'.format(getattr(course, 'course_name')))
-    for x in range(1,19):
+    for x in range(1, 19):
         info.append('Hole {}: {}\n'.format(x, getattr(course, 'hole_{}'.format(x))))
     return HttpResponse("".join(info))
 
+def get_score(request, round_id, player_id):
+    player_score = Score.objects.filter(round_id=round_id)
+    HttpResponse(str(player_score))
+
+def _add_player_to_round(round_id, player_name):
+    if Round.objects.filter(round_id=round_id).exists() == False:
+       return 0
+    else:
+        player_score = Score()
+        round = Round.objects.get(round_id=round_id)
+        if Player.objects.filter(player_name=player_name).exists() == False:
+            new_player = Player()
+            new_player.player_name = player_name
+            new_player.save()
+            player = new_player
+        else:
+            player = Player.objects.get(player_name=player_name)
+        player_score.round = round
+        player_score.player = player
+        player_score.save()
+        return 1
+
+def edit_score(request, round_id, player_name, hole, score):
+    if Score.objects.filter(round_id=round_id).exists() == False or Player.objects.filter(player_name=player_name).exists() == False:
+        success = _add_player_to_round(round_id, player_name)
+        if success:
+            new_player_id = Player.objects.get(player_name=player_name)
+            player_score = Score.objects.get(round_id=round_id, player_id=new_player_id)
+            setattr(player_score, 'hole_{}'.format(hole), score)
+            player_score.save()
+            return HttpResponse("Score edited")
+        else:
+            return HttpResponse("Error editing score!")
+
+    #The player already has an existing entry for the current round
+    else:
+        player_id = Player.objects.get(player_name=player_name)
+        player_score = Score.objects.get(round_id=round_id, player_id=player_id)
+        setattr(player_score, 'hole_{}'.format(hole), score)
+        player_score.save()
+        return HttpResponse('Score for {} updated'.format(player_name))
