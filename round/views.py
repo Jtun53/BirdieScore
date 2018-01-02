@@ -5,7 +5,7 @@ from .models import Round, Course, Player, Score
 # Create your views here.
 
 def index(request):
-    return HttpResponse('test')
+    return render(request, 'round/index.html')
 
 #this will be called when a user creates a new round
 def create_round(request):
