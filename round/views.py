@@ -1,11 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Round, Course, Player, Score
+from .forms import RoundForm
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'round/index.html')
+    form = RoundForm()
+    return render(request, 'round/index.html', {'form': form})
 
 #this will be called when a user creates a new round
 def create_round(request):
@@ -24,14 +26,16 @@ def create_player(request, id):
         response = "Player already exists!"
     return HttpResponse(response)
 
-def get_round_by_id(request, id):
-    score_list = []
-    scores = Score.objects.filter(round_id=id)
-    for items in scores:
-        for x in range(1, 19):
-            hole_score = getattr(items, 'hole_{}'.format(x))
-            score_list.append("hole {}: {}\n".format(x, hole_score))
-    return HttpResponse("\n".join(score_list))
+def get_round_by_id(request):
+    if request.method == 'POST':
+        id = request.POST.get('round_id','')
+        score_list = []
+        scores = Score.objects.filter(round_id=id)
+        for items in scores:
+            for x in range(1, 19):
+                hole_score = getattr(items, 'hole_{}'.format(x))
+                score_list.append("hole {}: {}\n".format(x, hole_score))
+        return HttpResponse("\n".join(score_list))
 
 def create_course_by_name(request, name):
     #TODO

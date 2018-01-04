@@ -1,7 +1,8 @@
 <ul>
-    <li> Player Name: <input type="text" name="player_name"> </li>
-    <li> Select Course: <input type="text" name="course_name"> </li>
-    <li> Course ID: <input type="text" name="round_id"> </li>
-    <button type="button" disabled>Create</button>
-    <button type="button" disabled>Join</button>
+    <form action="get_round/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit" />
+    </form>
+
 </ul>
