@@ -1,8 +1,12 @@
 <ul>
     <form action="get_round/" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <input type="submit" value="Submit" />
     </form>
-
+</ul>
+<ul>
+    <li>Player ID is usually email, to be unique. Always required</li>
+    <li>If joining a round, fill in Round ID</li>
+    <li>If creating a round, leave Round ID blank, select course, and submit.
 </ul>
