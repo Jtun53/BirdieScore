@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.http import HttpResponse
 from .models import Round, Course, Player, Score
 from .forms import RoundForm
@@ -29,8 +29,9 @@ def create_player(request, id):
 def get_round_by_id(request):
     if request.method == 'POST':
         id = request.POST.get('round_id','')
+        #if round_id == '' then user got here from Create button
         score_list = []
-        scores = Score.objects.filter(round_id=id)
+        scores = get_list_or_404(Score, round_id=id)
         for items in scores:
             for x in range(1, 19):
                 hole_score = getattr(items, 'hole_{}'.format(x))
