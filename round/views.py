@@ -40,10 +40,10 @@ def get_round_by_id(request):
         scores = get_list_or_404(Score, round_id=id)
         scores[0].par_total = 0
         for items in scores:
-            #items.tot = 0
+            items.total_score = 0
             for x in range(1, 19):
                 hole_score = getattr(items, 'hole_{}'.format(x))
-                #items.tot += hole_score
+                items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
                 scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
         return render(request, 'round/Scores.html', {'scores': scores})
