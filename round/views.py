@@ -38,11 +38,15 @@ def get_round_by_id(request):
         _add_player_to_round(id, player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
+        scores[0].par_total = 0
         for items in scores:
+            items.total_score = 0
             for x in range(1, 19):
                 hole_score = getattr(items, 'hole_{}'.format(x))
+                items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
-        return HttpResponse("\n".join(score_list))
+                scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
+        return render(request, 'round/Scores.html', {'scores': scores})
 
 def create_course_by_name(request, name):
     #TODO
@@ -97,7 +101,7 @@ def _add_player_to_round(round_id, player_name):
             player = new_player
         else:
             player = Player.objects.get(player_name=player_name)
-        if Score.objects.filter(player_id=player.id).exists() == False:
+        if Score.objects.filter(player_id=player.id).filter(round_id=round_id).exists() == False:
             player_score.round = round
             player_score.player = player
             player_score.save()
