@@ -38,11 +38,14 @@ def get_round_by_id(request):
         _add_player_to_round(id, player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
+        par_tot = 0
         for items in scores:
             for x in range(1, 19):
                 hole_score = getattr(items, 'hole_{}'.format(x))
                 score_list.append("hole {}: {}\n".format(x, hole_score))
-        return HttpResponse("\n".join(score_list))
+                par_tot += getattr(items.round.course, 'hole_{}'.format(x))
+        scores[0].par_total = par_tot
+        return render(request, 'round/Scores.html', {'scores': scores})
 
 def create_course_by_name(request, name):
     #TODO
