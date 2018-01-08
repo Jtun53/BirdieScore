@@ -69,3 +69,8 @@
         <td> {{ scores.0.par_total }} </td>
     </tr>
 </table>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" name="scores"/>
+</form>
