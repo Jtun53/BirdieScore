@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.http import HttpResponse
 from .models import Round, Course, Player, Score
-from .forms import RoundForm
+from .forms import RoundForm, ScoreForm
 
 # Create your views here.
 
@@ -37,11 +37,12 @@ def get_round_by_id(request):
             old_post = request.session.get('_old_post')
             id = old_post.get('round_id', '')
             player_name = old_post.get('player_name', '')
-            course_name = old_post.get('player_name', '')
+            course_name = old_post.get('course_name', '')
         #if round_id == '' then user got here from Create button
         if id == '':
             id = create_round(course_name)
 
+        form = ScoreForm()
         _add_player_to_round(id, player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
@@ -53,7 +54,7 @@ def get_round_by_id(request):
                 items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
                 scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
-        return render(request, 'round/Scores.html', {'scores': scores})
+        return render(request, 'round/Scores.html', {'form': form, 'scores': scores})
 
 def create_course_by_name(request, name):
     #TODO
