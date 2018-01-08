@@ -28,11 +28,18 @@ def create_player(request, id):
 
 def get_round_by_id(request):
     if request.method == 'POST':
-        id = request.POST.get('round_id', '')
-        player_name = request.POST.get('player_name')
+        if 'index' in request.POST:
+            id = request.POST.get('round_id', '')
+            player_name = request.POST.get('player_name')
+            course_name = request.POST.get('course', '')
+            request.session['_old_post'] = request.POST
+        else:
+            old_post = request.session.get('_old_post')
+            id = old_post.get('round_id', '')
+            player_name = old_post.get('player_name', '')
+            course_name = old_post.get('player_name', '')
         #if round_id == '' then user got here from Create button
         if id == '':
-            course_name = request.POST.get('course','')
             id = create_round(course_name)
 
         _add_player_to_round(id, player_name)
