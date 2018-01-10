@@ -31,21 +31,22 @@ def get_round_by_id(request):
         if 'index' in request.POST:
             id = request.POST.get('round_id', '')
             player_name = request.POST.get('player_name')
-            course_name = request.POST.get('course', '')
+            player_id = get_player_id_by_name(player_name)
             request.session['_old_post'] = request.POST
         else:
             old_post = request.session.get('_old_post')
             id = old_post.get('round_id', '')
             player_name = old_post.get('player_name', '')
-            course_name = old_post.get('course_name', '')
             hole = request.POST.get('hole_num')
             score = request.POST.get('hole_score')
             player_id = get_player_id_by_name(player_name)
             _edit_score(id, player_id, hole, score)
         #if round_id == '' then user got here from Create button
         if id == '':
+            course_name = request.POST.get('course')
             id = create_round(course_name)
-
+        else:
+            course_name = Round.objects.get(round_id=id).course.course_name
         form = ScoreForm()
         _add_player_to_round(id, player_name)
         score_list = []
@@ -58,7 +59,7 @@ def get_round_by_id(request):
                 items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
                 scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
-        return render(request, 'round/Scores.html', {'form': form, 'scores': scores})
+        return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course_name': course_name})
 
 def create_course_by_name(request, name):
     #TODO
