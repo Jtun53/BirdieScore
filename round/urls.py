@@ -11,5 +11,4 @@ urlpatterns = [
     path('create_player/<str:id>', views.create_player, name='create_player'),
     path('get_score/<int:round_id>', views.get_score, name='get_score'),
     path('create_player/<str:id>', views.create_player, name='create_player'),
-    path('edit_score/<int:round_id>/<str:player_name>/<int:hole>:<int:score>', views.edit_score, name='edit_score')
 ]
