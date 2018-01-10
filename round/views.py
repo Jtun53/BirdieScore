@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.http import HttpResponse
 from .models import Round, Course, Player, Score
-from .forms import RoundForm
+from .forms import RoundForm, ScoreForm
 
 # Create your views here.
 
@@ -28,13 +28,26 @@ def create_player(request, id):
 
 def get_round_by_id(request):
     if request.method == 'POST':
-        id = request.POST.get('round_id', '')
-        player_name = request.POST.get('player_name')
+        if 'index' in request.POST:
+            id = request.POST.get('round_id', '')
+            player_name = request.POST.get('player_name')
+            player_id = get_player_id_by_name(player_name)
+            request.session['_old_post'] = request.POST
+        else:
+            old_post = request.session.get('_old_post')
+            id = old_post.get('round_id', '')
+            player_name = old_post.get('player_name', '')
+            hole = request.POST.get('hole_num')
+            score = request.POST.get('hole_score')
+            player_id = get_player_id_by_name(player_name)
+            _edit_score(id, player_id, hole, score)
         #if round_id == '' then user got here from Create button
         if id == '':
-            course_name = request.POST.get('course','')
+            course_name = request.POST.get('course')
             id = create_round(course_name)
-
+        else:
+            course_name = Round.objects.get(round_id=id).course.course_name
+        form = ScoreForm()
         _add_player_to_round(id, player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
@@ -46,7 +59,7 @@ def get_round_by_id(request):
                 items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
                 scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
-        return render(request, 'round/Scores.html', {'scores': scores})
+        return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course_name': course_name})
 
 def create_course_by_name(request, name):
     #TODO
@@ -108,22 +121,11 @@ def _add_player_to_round(round_id, player_name):
             created = True
     return created
 
-def edit_score(request, round_id, player_name, hole, score):
-    if Score.objects.filter(round_id=round_id).exists() == False or Player.objects.filter(player_name=player_name).exists() == False:
-        success = _add_player_to_round(round_id, player_name)
-        if success:
-            new_player_id = Player.objects.get(player_name=player_name)
-            player_score = Score.objects.get(round_id=round_id, player_id=new_player_id)
-            setattr(player_score, 'hole_{}'.format(hole), score)
-            player_score.save()
-            return HttpResponse("Score edited")
-        else:
-            return HttpResponse("Error editing score!")
+def _edit_score(round_id, player_id, hole, score):
+    player_score = Score.objects.get(round_id=round_id, player_id=player_id)
+    setattr(player_score, 'hole_{}'.format(hole), score)
+    player_score.save()
 
-    #The player already has an existing entry for the current round
-    else:
-        player_id = Player.objects.get(player_name=player_name)
-        player_score = Score.objects.get(round_id=round_id, player_id=player_id)
-        setattr(player_score, 'hole_{}'.format(hole), score)
-        player_score.save()
-        return HttpResponse('Score for {} updated'.format(player_name))
+def get_player_id_by_name(name):
+    player = Player.objects.get(player_name=name)
+    return player.id
