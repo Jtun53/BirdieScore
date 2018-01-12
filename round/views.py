@@ -49,6 +49,8 @@ def get_round_by_id(request):
             course_name = Round.objects.get(round_id=id).course.course_name
         form = ScoreForm()
         _add_player_to_round(id, player_name)
+        if player_id == None:
+            player_id = get_player_id_by_name(player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
         scores[0].par_total = 0
@@ -127,5 +129,8 @@ def _edit_score(round_id, player_id, hole, score):
     player_score.save()
 
 def get_player_id_by_name(name):
-    player = Player.objects.get(player_name=name)
-    return player.id
+    if Player.objects.filter(player_name=name).exists() == True:
+        player = Player.objects.get(player_name=name)
+        return player.id
+    else:
+        return None

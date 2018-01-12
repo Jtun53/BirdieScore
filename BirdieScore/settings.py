@@ -25,7 +25,7 @@ SECRET_KEY = '!jmo6_7s4rdykngo1ud+=k4)h5yg13n_2!7=dwt6e#*4s*a+%_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['jtungul53.pythonanywhere.com']
 
 
 # Application definition
@@ -77,9 +77,10 @@ WSGI_APPLICATION = 'BirdieScore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'BirdieScore',
-        'USER': 'root',
-        'PASSWORD': 'test',
+        'NAME': 'jtungul53$BirdieScore',
+        'USER': 'jtungul53',
+        'PASSWORD': 'BirdieScore53',
+        'HOST': 'jtungul53.mysql.pythonanywhere-services.com'
     }
 }
 
