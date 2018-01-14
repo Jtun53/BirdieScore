@@ -69,14 +69,14 @@ def create_course_by_name(request, name):
     course = Course()
     course.course_name = name
     course.hole_1 = 3
-    course.hole_2 = 3
+    course.hole_2 = 4
     course.hole_3 = 3
-    course.hole_4 = 3
-    course.hole_5 = 3
+    course.hole_4 = 4
+    course.hole_5 = 4
     course.hole_6 = 3
-    course.hole_7 = 3
+    course.hole_7 = 4
     course.hole_8 = 3
-    course.hole_9 = 3
+    course.hole_9 = 4
 
     course.save()
 
