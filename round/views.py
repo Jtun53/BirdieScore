@@ -68,24 +68,15 @@ def create_course_by_name(request, name):
     #figoure out how we will assign hole numbers from frontend
     course = Course()
     course.course_name = name
-    course.hole_1 = 5
-    course.hole_2 = 4
-    course.hole_3 = 4
-    course.hole_4 = 5
+    course.hole_1 = 3
+    course.hole_2 = 3
+    course.hole_3 = 3
+    course.hole_4 = 3
     course.hole_5 = 3
-    course.hole_6 = 4
-    course.hole_7 = 4
+    course.hole_6 = 3
+    course.hole_7 = 3
     course.hole_8 = 3
-    course.hole_9 = 4
-    course.hole_10 = 4
-    course.hole_11 = 4
-    course.hole_12 = 3
-    course.hole_13 = 4
-    course.hole_14 = 5
-    course.hole_15 = 4
-    course.hole_16 = 3
-    course.hole_17 = 5
-    course.hole_18 = 4
+    course.hole_9 = 3
 
     course.save()
 
