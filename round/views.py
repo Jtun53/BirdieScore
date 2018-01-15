@@ -36,6 +36,8 @@ def get_round_by_id(request):
         else:
             old_post = request.session.get('_old_post')
             id = old_post.get('round_id', '')
+            if id == '':
+                id = request.session['generated_id']
             player_name = old_post.get('player_name', '')
             hole = request.POST.get('hole_num')
             score = request.POST.get('hole_score')
@@ -45,6 +47,7 @@ def get_round_by_id(request):
         if id == '':
             course_name = request.POST.get('course')
             id = create_round(course_name)
+            request.session['generated_id'] = id
         else:
             course_name = Round.objects.get(round_id=id).course.course_name
         form = ScoreForm()
