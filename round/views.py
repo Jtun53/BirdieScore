@@ -60,7 +60,9 @@ def get_round_by_id(request):
                 hole_score = getattr(items, 'hole_{}'.format(x))
                 items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
-                scores[0].par_total += getattr(items.round.course, 'hole_{}'.format(x))
+        for x in range(1,19):
+            scores[0].par_total += getattr(scores[0].round.course, 'hole_{}'.format(x))
+
         return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course_name': course_name})
 
 def create_course_by_name(request, name):
