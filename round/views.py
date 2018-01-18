@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.http import HttpResponse
-from .models import Round, Course, Player, Score
+from .models import Round, Course, Player, Score, RoundQueryset
 from .forms import RoundForm, ScoreForm
 
 # Create your views here.
@@ -26,9 +26,35 @@ def create_player(request, id):
         response = "Player already exists!"
     return HttpResponse(response)
 
+def generate_player_scores(request, player_name, course_name):
+    player_id = get_player_id_by_name(player_name)
+    score_list = Score.objects.filter(player_id=player_id)
+    course_score = Course.objects.get(course_name=course_name)
+    course_total = 0
+    count = 0
+    for score in score_list:
+        round_tot = 0
+        for x in range(1, 19):
+            round_tot += getattr(score, 'hole_{}'.format(x))
+        score_list[count].round_tot = round_tot
+        count += 1
+
+
+    for x in range(1, 19):
+        hole_score = getattr(course_score, 'hole_{}'.format(x))
+        course_total += hole_score
+    course_score.par_total= course_total
+    return render(request, 'round/player_score_list.html', {'score_list': score_list,
+                                                            'player_name': player_name,
+                                                            'course_score': course_score})
+
 def get_round_by_id(request):
     if request.method == 'POST':
-        if 'index' in request.POST:
+        if 'get_scores' in request.POST:
+            player_name = request.POST.get('player_name')
+            course_name = request.POST.get('course')
+            return generate_player_scores(request, player_name, course_name)
+        elif 'index' in request.POST:
             id = request.POST.get('round_id', '')
             player_name = request.POST.get('player_name')
             player_id = get_player_id_by_name(player_name)
