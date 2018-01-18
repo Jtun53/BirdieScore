@@ -2,6 +2,7 @@
 <b>Course Name: {{ course_score.course_name }}</b>
 <table border='1'>
     <tr>
+        <th>Date </th>
         <th>Hole 1</th>
         <th>Hole 2</th>
         <th>Hole 3</th>
@@ -24,6 +25,7 @@
     </tr>
     {% for items in score_list %}
     <tr>
+        <td> {{ items.round.created_at }}</td>
         <td> {{ items.hole_1 }} </td>
         <td> {{ items.hole_2 }} </td>
         <td> {{ items.hole_3 }} </td>
@@ -46,6 +48,7 @@
     </tr>
     {% endfor %}
     <tr>
+        <td> </td>
         <td> {{ course_score.hole_1 }} </td>
         <td> {{ course_score.hole_2 }} </td>
         <td> {{ course_score.hole_3 }} </td>
