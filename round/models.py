@@ -27,6 +27,8 @@ def random_4_digits():
 
 class Course(models.Model):
     course_name = models.CharField(max_length=20)
+    course_city = models.CharField(max_length=50)
+    course_state = models.CharField(max_length=2)
     hole_1 = models.IntegerField(default=0)
     hole_2 = models.IntegerField(default=0)
     hole_3 = models.IntegerField(default=0)
