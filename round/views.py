@@ -74,8 +74,9 @@ def get_round_by_id(request):
             course_name = request.POST.get('course')
             id = create_round(course_name)
             request.session['generated_id'] = id
+            course = Round.objects.get(round_id=id).course
         else:
-            course_name = Round.objects.get(round_id=id).course.course_name
+            course = Round.objects.get(round_id=id).course
         form = ScoreForm()
         _add_player_to_round(id, player_name)
         if player_id == None:
@@ -92,7 +93,7 @@ def get_round_by_id(request):
         for x in range(1,19):
             scores[0].par_total += getattr(scores[0].round.course, 'hole_{}'.format(x))
 
-        return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course_name': course_name})
+        return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course': course})
 
 def create_course_by_name(request, name):
     #TODO
