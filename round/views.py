@@ -83,6 +83,7 @@ def get_round_by_id(request):
             player_id = get_player_id_by_name(player_name)
         score_list = []
         scores = get_list_or_404(Score, round_id=id)
+        form['hole_num'].initial = set_next_empty_hole(player_id, scores)
         scores[0].par_total = 0
         for items in scores:
             items.total_score = 0
@@ -90,10 +91,19 @@ def get_round_by_id(request):
                 hole_score = getattr(items, 'hole_{}'.format(x))
                 items.total_score += hole_score
                 score_list.append("hole {}: {}\n".format(x, hole_score))
-        for x in range(1,19):
+        for x in range(1, 19):
             scores[0].par_total += getattr(scores[0].round.course, 'hole_{}'.format(x))
 
         return render(request, 'round/Scores.html', {'form': form, 'scores': scores, 'player_id': player_id, 'course': course})
+
+def set_next_empty_hole(player_id, scores):
+    for player_scores in scores:
+        if player_scores.player.id == player_id:
+            for i in range(1,19):
+                if getattr(player_scores, 'hole_{}'.format(i)) == 0:
+                    return (i,i)
+            return ()
+
 
 def create_course_by_name(request, name):
     #TODO
