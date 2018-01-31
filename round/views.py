@@ -28,8 +28,11 @@ def create_player(request, id):
 
 def generate_player_scores(request, player_name, course_name):
     player_id = get_player_id_by_name(player_name)
-    score_list = Score.objects.filter(player_id=player_id)
+    score_list = Score.objects.filter(player_id=player_id).filter(round__course__course_name=course_name)
     course_score = Course.objects.get(course_name=course_name)
+    for x in range(len(score_list)):
+        if score_list[x].round.course.course_name != course_name:
+            del score_list[x]                                                 
     course_total = 0
     count = 0
     for score in score_list:
